@@ -1,0 +1,6 @@
+{
+  "name": "TraumaWatch",
+  "description": "Longitudinal mental-health early-warning prototype for trauma survivors, flagging distress trajectories against individual baselines for human clinical review.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

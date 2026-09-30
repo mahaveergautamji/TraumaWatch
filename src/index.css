@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f2f7f6;
+  --ink: #15303a;
+  --mut: #5a7580;
+  --card: #ffffff;
+  --line: #d9e6e4;
+  --br: #2a7f8f;
+  --br2: #6fb59a;
+  --g: #3f9d78;
+  --y: #d9a934;
+  --o: #e07a3f;
+  --r: #cf4b4b;
+  --soft: #e8f2f0;
+}
+
+[data-theme="dark"] {
+  --bg: #0e1b1f;
+  --ink: #e3efee;
+  --mut: #8fa9b0;
+  --card: #152529;
+  --line: #24393f;
+  --soft: #1b3036;
+}
+
+@layer base {
+  body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--bg);
+    color: var(--ink);
+  }
+
+  h1, h2, h3, .font-serif {
+    font-family: 'Fraunces', Georgia, serif;
+    letter-spacing: -0.015em;
+  }
+
+  code, kbd, samp, pre, .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.breath-circle {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  margin: 18px auto;
+  background: radial-gradient(var(--br2), var(--br));
+  animation: breathe 8s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  50% {
+    transform: scale(1.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breath-circle {
+    animation: none;
+  }
+}
