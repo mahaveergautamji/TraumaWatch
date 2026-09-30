@@ -105,6 +105,20 @@ export interface ClinicalNote {
   };
 }
 
+export interface ClinicalGoal {
+  id: string;
+  title: string;
+  description: string;
+  category: 'sleep' | 'tension' | 'intrusions' | 'connection' | 'grounding' | 'routine';
+  targetValue: number;
+  currentValue: number;
+  unit: string;
+  deadline: string;
+  status: 'in_progress' | 'completed' | 'paused';
+  clinicianNotes?: string;
+  createdAt: string;
+}
+
 export interface SurvivorProfile {
   id: string; // Synthetic ID e.g. "S-104"
   pseudonym: string; // E.g. "Case 104"
@@ -116,5 +130,6 @@ export interface SurvivorProfile {
   isEscalated: boolean;
   history: CheckInEntry[];
   clinicalNotes: ClinicalNote[];
+  clinicalGoals?: ClinicalGoal[];
   assignedCounsellor: string;
 }

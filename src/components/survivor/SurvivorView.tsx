@@ -15,6 +15,7 @@ import {
 import { CheckInEntry, SurvivorProfile } from '../../types';
 import { analyzeTrajectory } from '../../utils/riskEngine';
 import { TrajectoryChart } from '../common/TrajectoryChart';
+import { PeerSupportSection } from './PeerSupportSection';
 
 interface SurvivorViewProps {
   profile: SurvivorProfile;
@@ -30,7 +31,7 @@ export const SurvivorView: React.FC<SurvivorViewProps> = ({
   onOpenGrounding,
   onOpenCounsellorContact,
 }) => {
-  const [tab, setTab] = useState<'ci' | 'tr'>('ci');
+  const [tab, setTab] = useState<'ci' | 'tr' | 'peer'>('ci');
   const [step, setStep] = useState<number>(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [optionalNote, setOptionalNote] = useState<string>('');
@@ -94,12 +95,13 @@ export const SurvivorView: React.FC<SurvivorViewProps> = ({
       : 'The last few days have felt heavier than your usual. You do not have to carry this alone.';
 
   return (
-    <div className="max-w-[440px] mx-auto py-4 px-3 sm:px-0">
-      {/* Top Segmented Sub-Nav: Daily check-in vs My Trend */}
+    <div className={`${tab === 'peer' ? 'max-w-[560px]' : 'max-w-[440px]'} mx-auto py-4 px-3 sm:px-0 transition-all duration-200`}>
+      {/* Top Segmented Sub-Nav: Daily check-in vs My Trend vs Peer Support */}
       <div className="flex gap-1.5 p-1 bg-[#e8f2f0] rounded-xl mb-4">
         <button
+          type="button"
           onClick={() => setTab('ci')}
-          className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${
+          className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
             tab === 'ci'
               ? 'bg-[#2a7f8f] text-white shadow-xs'
               : 'text-[#5a7580] hover:text-[#15303a]'
@@ -108,14 +110,27 @@ export const SurvivorView: React.FC<SurvivorViewProps> = ({
           Daily check-in
         </button>
         <button
+          type="button"
           onClick={() => setTab('tr')}
-          className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${
+          className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
             tab === 'tr'
               ? 'bg-[#2a7f8f] text-white shadow-xs'
               : 'text-[#5a7580] hover:text-[#15303a]'
           }`}
         >
           My Trend
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab('peer')}
+          className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer ${
+            tab === 'peer'
+              ? 'bg-[#2a7f8f] text-white shadow-xs'
+              : 'text-[#5a7580] hover:text-[#15303a]'
+          }`}
+        >
+          <Users className="w-3.5 h-3.5" />
+          <span>Peer Support</span>
         </button>
       </div>
 
@@ -229,7 +244,7 @@ export const SurvivorView: React.FC<SurvivorViewProps> = ({
               </div>
             )}
           </div>
-        ) : (
+        ) : tab === 'tr' ? (
           /* MY TREND TAB */
           <div className="space-y-4">
             <div>
@@ -271,20 +286,31 @@ export const SurvivorView: React.FC<SurvivorViewProps> = ({
             {/* Suggested Calm Actions */}
             <div className="grid gap-2 pt-1">
               <button
+                type="button"
                 onClick={() => onOpenGrounding('breathing')}
-                className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[#f2f7f6] border border-[#d9e6e4] text-[#15303a] text-xs font-medium transition-colors text-center"
+                className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[#f2f7f6] border border-[#d9e6e4] text-[#15303a] text-xs font-medium transition-colors text-center cursor-pointer"
               >
                 Try a grounding exercise
               </button>
               <button
+                type="button"
                 onClick={() => onOpenGrounding('sleep')}
-                className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[#f2f7f6] border border-[#d9e6e4] text-[#15303a] text-xs font-medium transition-colors text-center"
+                className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[#f2f7f6] border border-[#d9e6e4] text-[#15303a] text-xs font-medium transition-colors text-center cursor-pointer"
               >
                 Sleep wind-down tips
               </button>
               <button
+                type="button"
+                onClick={() => setTab('peer')}
+                className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[#f2f7f6] border border-[#d9e6e4] text-[#15303a] text-xs font-medium transition-colors text-center flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Users className="w-3.5 h-3.5 text-[#2a7f8f]" />
+                <span>Join anonymous peer support circles</span>
+              </button>
+              <button
+                type="button"
                 onClick={onOpenCounsellorContact}
-                className="w-full py-2.5 px-4 rounded-xl bg-[#2a7f8f] hover:bg-[#236b79] text-white text-xs font-medium transition-colors text-center shadow-xs"
+                className="w-full py-2.5 px-4 rounded-xl bg-[#2a7f8f] hover:bg-[#236b79] text-white text-xs font-medium transition-colors text-center shadow-xs cursor-pointer"
               >
                 Talk to a counsellor
               </button>
@@ -293,17 +319,23 @@ export const SurvivorView: React.FC<SurvivorViewProps> = ({
             {/* Retake Callout */}
             <div className="pt-2 text-center">
               <button
+                type="button"
                 onClick={() => {
                   setStep(0);
                   setHasFinishedToday(false);
                   setTab('ci');
                 }}
-                className="text-xs text-[#5a7580] hover:text-[#2a7f8f] underline underline-offset-2"
+                className="text-xs text-[#5a7580] hover:text-[#2a7f8f] underline underline-offset-2 cursor-pointer"
               >
                 Retake daily check-in
               </button>
             </div>
           </div>
+        ) : (
+          <PeerSupportSection
+            onOpenGrounding={onOpenGrounding}
+            onOpenCounsellorContact={onOpenCounsellorContact}
+          />
         )}
       </div>
     </div>

@@ -9,7 +9,7 @@ import { GroundingModal } from './components/modals/GroundingModal';
 import { CounsellorContactModal } from './components/modals/CounsellorContactModal';
 import { AuthModal } from './components/modals/AuthModal';
 import { INITIAL_SURVIVORS } from './data/syntheticData';
-import { SurvivorProfile, CheckInEntry, ClinicalNote } from './types';
+import { SurvivorProfile, CheckInEntry, ClinicalNote, ClinicalGoal } from './types';
 import { analyzeTrajectory } from './utils/riskEngine';
 import { CheckCircle2, X } from 'lucide-react';
 
@@ -190,6 +190,69 @@ export default function App() {
     setToastMessage('Clinical note added to case record');
   };
 
+  // Handler: Add Clinical Goal
+  const handleAddGoal = (
+    survivorId: string,
+    goalData: Omit<ClinicalGoal, 'id' | 'createdAt'>
+  ) => {
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+
+    const newGoal: ClinicalGoal = {
+      id: `cg-${Date.now()}`,
+      createdAt: formattedDate,
+      ...goalData,
+    };
+
+    setSurvivors((prev) =>
+      prev.map((s) => {
+        if (s.id !== survivorId) return s;
+        return {
+          ...s,
+          clinicalGoals: [newGoal, ...(s.clinicalGoals || [])],
+        };
+      })
+    );
+    setToastMessage(`New clinical objective set for ${survivorId}`);
+  };
+
+  // Handler: Update Clinical Goal
+  const handleUpdateGoal = (
+    survivorId: string,
+    goalId: string,
+    updates: Partial<ClinicalGoal>
+  ) => {
+    setSurvivors((prev) =>
+      prev.map((s) => {
+        if (s.id !== survivorId) return s;
+        return {
+          ...s,
+          clinicalGoals: (s.clinicalGoals || []).map((g) =>
+            g.id === goalId ? { ...g, ...updates } : g
+          ),
+        };
+      })
+    );
+  };
+
+  // Handler: Delete Clinical Goal
+  const handleDeleteGoal = (survivorId: string, goalId: string) => {
+    setSurvivors((prev) =>
+      prev.map((s) => {
+        if (s.id !== survivorId) return s;
+        return {
+          ...s,
+          clinicalGoals: (s.clinicalGoals || []).filter((g) => g.id !== goalId),
+        };
+      })
+    );
+    setToastMessage('Clinical goal removed');
+  };
+
   // Handler: Switch directly from Counsellor view into the Survivor App for a specific case
   const handleSwitchToSurvivorApp = (survivorId: string) => {
     setActiveSurvivorId(survivorId);
@@ -277,6 +340,9 @@ export default function App() {
             onMarkReviewed={handleMarkReviewed}
             onToggleEscalation={handleToggleEscalation}
             onAddNote={handleAddNote}
+            onAddGoal={handleAddGoal}
+            onUpdateGoal={handleUpdateGoal}
+            onDeleteGoal={handleDeleteGoal}
             onSwitchToSurvivorApp={handleSwitchToSurvivorApp}
           />
         )}

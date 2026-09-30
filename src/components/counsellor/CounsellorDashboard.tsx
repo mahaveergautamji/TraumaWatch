@@ -23,7 +23,7 @@ import {
   Download,
   Zap,
 } from 'lucide-react';
-import { SurvivorProfile, RiskTier, ClinicalNote, CheckInEntry } from '../../types';
+import { SurvivorProfile, RiskTier, ClinicalNote, CheckInEntry, ClinicalGoal } from '../../types';
 import { analyzeTrajectory } from '../../utils/riskEngine';
 import { generateSurvivorPdfReport } from '../../utils/pdfExport';
 import { TrajectoryChart } from '../common/TrajectoryChart';
@@ -31,6 +31,8 @@ import { DistressTrend } from './DistressTrend';
 import { DistressCalendarHeatmap } from './DistressCalendarHeatmap';
 import { EarlyWarningAlert } from './EarlyWarningAlert';
 import { DistressComparisonTable } from './DistressComparisonTable';
+import { CorrelationMatrixChart } from './CorrelationMatrixChart';
+import { ClinicalGoalsSection } from './ClinicalGoalsSection';
 
 interface CounsellorDashboardProps {
   survivors: SurvivorProfile[];
@@ -39,6 +41,9 @@ interface CounsellorDashboardProps {
   onMarkReviewed: (id: string) => void;
   onToggleEscalation: (id: string) => void;
   onAddNote: (id: string, note: Omit<ClinicalNote, 'id' | 'timestamp'>) => void;
+  onAddGoal?: (survivorId: string, goal: Omit<ClinicalGoal, 'id' | 'createdAt'>) => void;
+  onUpdateGoal?: (survivorId: string, goalId: string, updates: Partial<ClinicalGoal>) => void;
+  onDeleteGoal?: (survivorId: string, goalId: string) => void;
   onSwitchToSurvivorApp: (id: string) => void;
 }
 
@@ -49,6 +54,9 @@ export const CounsellorDashboard: React.FC<CounsellorDashboardProps> = ({
   onMarkReviewed,
   onToggleEscalation,
   onAddNote,
+  onAddGoal,
+  onUpdateGoal,
+  onDeleteGoal,
   onSwitchToSurvivorApp,
 }) => {
   // Filter & Search states
@@ -482,6 +490,12 @@ export const CounsellorDashboard: React.FC<CounsellorDashboardProps> = ({
               survivorId={currentCase.profile.id}
             />
 
+            {/* Correlation Matrix Chart: Sleep Quality vs Anxiety Levels */}
+            <CorrelationMatrixChart
+              history={currentCase.profile.history}
+              survivorId={currentCase.profile.id}
+            />
+
             {/* Baseline vs Current & Insights Callout */}
             <div className="pt-2 border-t border-[#d9e6e4] space-y-3">
               <div className="flex items-center justify-between">
@@ -577,6 +591,15 @@ export const CounsellorDashboard: React.FC<CounsellorDashboardProps> = ({
                 })}
               </div>
             </div>
+
+            {/* Clinical Goals & Wellness Objectives Section */}
+            <ClinicalGoalsSection
+              survivorId={currentCase.profile.id}
+              goals={currentCase.profile.clinicalGoals || []}
+              onAddGoal={onAddGoal || (() => {})}
+              onUpdateGoal={onUpdateGoal || (() => {})}
+              onDeleteGoal={onDeleteGoal || (() => {})}
+            />
 
             {/* Action Buttons */}
             <div className="pt-2 border-t border-[#d9e6e4] grid grid-cols-2 sm:grid-cols-4 gap-2">
