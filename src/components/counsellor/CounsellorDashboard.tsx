@@ -30,6 +30,7 @@ import { TrajectoryChart } from '../common/TrajectoryChart';
 import { DistressTrend } from './DistressTrend';
 import { DistressCalendarHeatmap } from './DistressCalendarHeatmap';
 import { EarlyWarningAlert } from './EarlyWarningAlert';
+import { DistressComparisonTable } from './DistressComparisonTable';
 
 interface CounsellorDashboardProps {
   survivors: SurvivorProfile[];
@@ -473,6 +474,12 @@ export const CounsellorDashboard: React.FC<CounsellorDashboardProps> = ({
                   }
                 }, 60);
               }}
+            />
+
+            {/* 7-Day vs. 30-Day Moving Average Comparison Table */}
+            <DistressComparisonTable
+              history={currentCase.profile.history}
+              survivorId={currentCase.profile.id}
             />
 
             {/* Baseline vs Current & Insights Callout */}

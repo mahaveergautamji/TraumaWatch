@@ -30,6 +30,20 @@ export interface DomainMetricComparison {
   status: 'deteriorated' | 'improved' | 'stable';
 }
 
+export interface MovingAverageComparisonRow {
+  domainKey: 'composite' | 'sleep' | 'intrusions' | 'tension' | 'withdrawal' | 'mood';
+  label: string;
+  sublabel: string;
+  current7DayAvg: number;
+  historical30DayAvg: number;
+  delta: number;
+  deltaPct: number;
+  scaleMax: number; // 20 for composite, 4 for individual domains
+  status: 'critical_spike' | 'elevated' | 'stable' | 'improved';
+  badgeLabel: string;
+  clinicalImplication: string;
+}
+
 export interface MetricInsights {
   mostDeteriorated: DomainMetricComparison | null;
   mostImproved: DomainMetricComparison | null;
